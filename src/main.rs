@@ -1,4 +1,5 @@
-// open.rs
+mod parser;
+
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
@@ -14,29 +15,12 @@ fn main() {
             process::exit(1);
         },
     };
-    let assembly = read_file(&filename);
+    let asm = read_file(&filename);
 
-    let binary = translate(assembly);
+    let binary = parser::parse(asm);
 
     let destination = filename.replace(".asm", ".hack");
     write_binary(binary, destination);
-}
-
-fn translate(assembly: String) -> String {
-    assembly.lines()
-            .map(|x| encode_line(x))
-            .collect()
-}
-
-fn encode_line(line: &str) -> String {
-    let mut l = match line {
-        line if line.contains("@") => {
-            format!("{:016b}", line[1..].parse::<u16>().unwrap())
-        },
-        _ => String::from(line)
-    };
-    l.push_str("\n");
-    l
 }
 
 fn read_file(source: &String) -> String {
@@ -49,12 +33,12 @@ fn read_file(source: &String) -> String {
     };
 
     let mut s = String::new();
-    let assembly = match file.read_to_string(&mut s) {
+    let asm = match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}: {}", display,
                                                    why.description()),
         Ok(_) => s,
     };
-    assembly
+    asm
 }
 
 fn write_binary(binary: String, destination: String) {
