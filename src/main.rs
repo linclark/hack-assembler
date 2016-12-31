@@ -14,12 +14,12 @@ fn main() {
             process::exit(1);
         },
     };
-    let assembly = get_assembly(&filename);
+    let assembly = read_file(&filename);
 
-    let machine_code = translate(assembly);
+    let binary = translate(assembly);
 
     let destination = filename.replace(".asm", ".hack");
-    write_machine_code(machine_code, destination);
+    write_binary(binary, destination);
 }
 
 fn translate(assembly: String) -> String {
@@ -39,8 +39,8 @@ fn encode_line(line: &str) -> String {
     l
 }
 
-fn get_assembly(filename: &String) -> String {
-    let path = Path::new(filename.as_str());
+fn read_file(source: &String) -> String {
+    let path = Path::new(source.as_str());
     let display = path.display();
 
     let mut file = match File::open(&path) {
@@ -57,7 +57,7 @@ fn get_assembly(filename: &String) -> String {
     assembly
 }
 
-fn write_machine_code(machine_code: String, destination: String) {
+fn write_binary(binary: String, destination: String) {
     let path = Path::new(destination.as_str());
     let display = path.display();
 
@@ -66,7 +66,7 @@ fn write_machine_code(machine_code: String, destination: String) {
         Ok(file) => file,
     };
 
-    match file.write_all(machine_code.as_bytes()) {
+    match file.write_all(binary.as_bytes()) {
         Err(err) => {
             panic!("couldn't write to {}: {}", display, err.description())
         },
