@@ -4,11 +4,22 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::env;
+use std::process;
 
 fn main() {
-    let assembly = get_assembly();
+    let filename = match env::args().nth(1) {
+        Some(x) => x,
+        None    => {
+            println!("usage: hack-assembler <input_file>");
+            process::exit(1);
+        },
+    };
+    let assembly = get_assembly(&filename);
+
     let machine_code = translate(assembly);
-    write_machine_code(machine_code);
+
+    let destination = filename.replace(".asm", ".hack");
+    write_machine_code(machine_code, destination);
 }
 
 fn translate(assembly: String) -> String {
@@ -28,10 +39,7 @@ fn encode_line(line: &str) -> String {
     l
 }
 
-fn get_assembly() -> String {
-    let mut args = env::args();
-    let filename = args.nth(1).unwrap();
-
+fn get_assembly(filename: &String) -> String {
     let path = Path::new(filename.as_str());
     let display = path.display();
 
@@ -49,11 +57,8 @@ fn get_assembly() -> String {
     assembly
 }
 
-fn write_machine_code(machine_code: String) {
-    let mut args = env::args();
-    let filename = args.nth(2).unwrap();
-
-    let path = Path::new(filename.as_str());
+fn write_machine_code(machine_code: String, destination: String) {
+    let path = Path::new(destination.as_str());
     let display = path.display();
 
     let mut file = match File::create(&path) {
