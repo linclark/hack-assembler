@@ -16,15 +16,18 @@ fn encode_line(line: &str) -> String {
     }
 }
 
-struct Command {
-  a: u8
+#[derive(Debug,PartialEq)]
+pub enum Command {
+    ACommand { address: u16 }
 }
 
-#[test]
-fn encodes_a_command() {
-    let encoded = encode_line("@8");
-    assert_eq!(encoded, "0000000000001000");
-}
+named!(command<Command>,
+  ws!(
+    alt!(
+      a_command => { |address|   Command::ACommand{address: address} }
+    )
+  )
+);
 
 named!(a_command <&[u8], u16>,
     preceded!(
@@ -37,6 +40,13 @@ named!(a_command <&[u8], u16>,
 );
 
 #[test]
+fn encodes_a_command() {
+    let encoded = encode_line("@8");
+    assert_eq!(encoded, "0000000000001000");
+}
+
+#[test]
 fn parses_a_command() {
-    assert_eq!(a_command(b"@8"), IResult::Done(&b""[..], 8));
+    let res = command(b"@8");
+    assert_eq!(command(b"@8"), IResult::Done(&b""[..], Command::ACommand{address: 8}));
 }
