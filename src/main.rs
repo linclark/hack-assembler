@@ -2,6 +2,7 @@
 extern crate nom;
 
 mod parser;
+mod encoder;
 
 use std::error::Error;
 use std::fs::File;
@@ -20,7 +21,8 @@ fn main() {
     };
     let asm = read_file(&filename);
 
-    let binary = parser::parse(asm);
+    let mut command_nodes = parser::parse(asm);
+    let binary = encoder::encode(&command_nodes);
 
     let destination = filename.replace(".asm", ".hack");
     write_binary(binary, destination);

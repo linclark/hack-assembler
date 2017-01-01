@@ -1,19 +1,16 @@
 use nom::{IResult, digit, not_line_ending, alphanumeric,multispace, space};
 use std::str::{self, FromStr};
 
-pub fn parse(asm: String) -> String {
+pub fn parse(asm: String) -> Vec<Command> {
     asm.lines()
-       .map(|x| encode_line(x) + "\n")
-       .collect()
-}
-
-fn encode_line(line: &str) -> String {
-    match line {
-        line if line.contains("@") => {
-            format!("{:016b}", line[1..].parse::<u16>().unwrap())
-        },
-        _ => String::from(line)
-    }
+       .map(|x| {
+            match command(x.as_bytes()) {
+                IResult::Done(I, O) => O,
+                IResult::Incomplete(Needed) => panic!(Needed),
+                IResult::Error(Error) => panic!(Error)
+            }
+       })
+       .collect::<Vec<Command>>()
 }
 
 #[derive(Debug,PartialEq)]
@@ -38,12 +35,6 @@ named!(a_command <&[u8], u16>,
         )
     )
 );
-
-#[test]
-fn encodes_a_command() {
-    let encoded = encode_line("@8");
-    assert_eq!(encoded, "0000000000001000");
-}
 
 #[test]
 fn parses_a_command() {
