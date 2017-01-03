@@ -31,6 +31,17 @@ pub static OPCODES: phf::Map<&'static str, u16> = phf_map! {
     "D|M" => 0b1010101u16
 };
 
+pub static DESTCODES: phf::Map<&'static str, u16> = phf_map! {
+    "0" => 0b000u16,
+    "M" => 0b001u16,
+    "D" => 0b010u16,
+    "MD" => 0b011u16,
+    "A" => 0b100u16,
+    "AM" => 0b101u16,
+    "AD" => 0b110u16,
+    "ADM" => 0b111u16
+};
+
 pub static JUMPCODES: phf::Map<&'static str, u16> = phf_map! {
     "0" => 0b000u16,
     "JGT" => 0b001u16,
