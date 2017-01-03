@@ -31,6 +31,17 @@ pub static OPCODES: phf::Map<&'static str, u16> = phf_map! {
     "D|M" => 0b1010101u16
 };
 
+pub static JUMPCODES: phf::Map<&'static str, u16> = phf_map! {
+    "0" => 0b000u16,
+    "JGT" => 0b001u16,
+    "JEQ" => 0b010u16,
+    "JGE" => 0b011u16,
+    "JLT" => 0b100u16,
+    "JNE" => 0b101u16,
+    "JLE" => 0b110u16,
+    "JMP" => 0b111u16
+};
+
 #[derive(Debug,PartialEq)]
 pub enum Command {
     ACommand { address: u16 },
