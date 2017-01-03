@@ -4,21 +4,26 @@ use constants::Command;
 
 pub fn parse(asm: String) -> Vec<Command> {
     asm.lines()
-       .map(|x| {
+        .map(|x| {
             match command(x.as_bytes()) {
                 IResult::Done(I, O) => O,
                 IResult::Incomplete(Needed) => panic!(Needed),
-                IResult::Error(Error) => panic!(Error)
+                IResult::Error(Error) => panic!(Error),
             }
-       })
-       .collect::<Vec<Command>>()
+        })
+        .collect::<Vec<Command>>()
 }
 
 named!(command<Command>,
   ws!(
     alt_complete!(
         a_command => { |address| Command::ACommand{address: address} } |
-        c_command => { |(dest, comp, jump)| Command::CCommand{dest: dest, comp: comp, jump: jump} }
+        c_command => { |(dest, comp, jump)|
+            Command::CCommand{
+                dest: dest,
+                comp: comp,
+                jump: jump}
+            }
     )
   )
 );
@@ -83,17 +88,44 @@ fn parses_a_command() {
 #[test]
 fn parses_c_command() {
     let result = command(b"M-D");
-    assert_eq!(result, IResult::Done(&b""[..], Command::CCommand{dest: None, comp: String::from("M-D"), jump: None}));
+    assert_eq!(
+        result,
+        IResult::Done(&b""[..],
+            Command::CCommand{
+                dest: None,
+                comp: String::from("M-D"),
+                jump: None
+            }
+        )
+    );
 }
 
 #[test]
 fn parses_c_command_with_jump() {
     let result = command(b"M-D;JMP");
-    assert_eq!(result, IResult::Done(&b""[..], Command::CCommand{dest: None, comp: String::from("M-D"), jump: Some(String::from("JMP"))}));
+    assert_eq!(
+        result,
+        IResult::Done(&b""[..],
+            Command::CCommand{
+                dest: None,
+                comp: String::from("M-D"),
+                jump: Some(String::from("JMP"))
+            }
+        )
+    );
 }
 
 #[test]
 fn parses_c_command_with_dest() {
     let result = command(b"D=M-D");
-    assert_eq!(result, IResult::Done(&b""[..], Command::CCommand{dest: Some(String::from("D")), comp: String::from("M-D"), jump: None}));
+    assert_eq!(
+        result,
+        IResult::Done(&b""[..],
+            Command::CCommand{
+                dest: Some(String::from("D")),
+                comp: String::from("M-D"),
+                jump: None
+            }
+        )
+    );
 }

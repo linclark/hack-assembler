@@ -59,6 +59,6 @@ pub enum Command {
     CCommand {
         dest: Option<String>,
         comp: String,
-        jump: Option<String>
-    }
+        jump: Option<String>,
+    },
 }
