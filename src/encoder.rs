@@ -33,7 +33,10 @@ fn encodes_a_command() {
 
 #[test]
 fn encodes_c_command() {
-    let command_nodes = vec!(Command::CCommand {dest: None, comp: String::from("1"), jump: None});
+    let command_nodes = vec!(
+        Command::CCommand {dest: None, comp: String::from("1"), jump: None},
+        Command::CCommand {dest: None, comp: String::from("D+A"), jump: None}
+    );
     let encoded = encode(&command_nodes);
-    assert_eq!(encoded, "1110111111000000");
+    assert_eq!(encoded, "1110111111000000\n1110000010000000");
 }
