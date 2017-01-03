@@ -1,8 +1,13 @@
+#![feature(plugin)]
+#![plugin(phf_macros)]
+
 #[macro_use]
 extern crate nom;
+extern crate phf;
 
-mod parser;
+mod constants;
 mod encoder;
+mod parser;
 
 use std::error::Error;
 use std::fs::File;

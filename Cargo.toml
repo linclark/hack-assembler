@@ -5,3 +5,5 @@ authors = ["Lin Clark <lclark@mozilla.com>"]
 
 [dependencies]
 nom = "^2.0"
+phf = "~0.7.20"
+phf_macros = "~0.7.20"

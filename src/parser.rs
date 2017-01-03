@@ -1,5 +1,6 @@
 use nom::{IResult, alpha, anychar, digit, non_empty, not_line_ending, multispace, space};
 use std::str::{self, FromStr};
+use constants::Command;
 
 pub fn parse(asm: String) -> Vec<Command> {
     asm.lines()
@@ -11,16 +12,6 @@ pub fn parse(asm: String) -> Vec<Command> {
             }
        })
        .collect::<Vec<Command>>()
-}
-
-#[derive(Debug,PartialEq)]
-pub enum Command {
-    ACommand { address: u16 },
-    CCommand {
-        dest: Option<String>,
-        comp: String,
-        jump: Option<String>
-    }
 }
 
 named!(command<Command>,
