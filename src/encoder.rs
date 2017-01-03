@@ -4,10 +4,7 @@ use std::fmt;
 
 pub fn encode(ref command_nodes: &Vec<Command>) -> String {
     let encoded = command_nodes.iter().map(|node| {
-        match *node {
-            Command::ACommand {address: address} => format!("{:016b}", address),
-            Command::CCommand {dest: ref dest, comp: ref comp, jump: ref jump} => format!("{:016b}", node)
-        }
+        format!("{:016b}", node)
     });
     encoded.collect::<Vec<String>>().join("\n")
 }
@@ -15,13 +12,13 @@ pub fn encode(ref command_nodes: &Vec<Command>) -> String {
 impl fmt::Binary for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let output = match *self {
+            Command::ACommand {address: address} => address,
             Command::CCommand {dest: ref dest, comp: ref comp, jump: ref jump} => {
                 // command flag + 2 filler bits
                 0b111u16 * 2_u16.pow(13)
                 // opcode
                 + OPCODES.get(comp.as_str()).unwrap() * 2_u16.pow(6)
-            },
-            _ => panic!("Can't call format on ACommands")
+            }
         };
         write!(f, "{:016b}", output)
     }
